@@ -9,7 +9,7 @@ import time
 
 
 import const
-from battleships_gui import BattleshipsGraphics
+#from battleships_gui import BattleshipsGraphics
 from player_socket import PlayerSocket
 
 
@@ -42,7 +42,7 @@ def giveOutcome(player_board, i1, i2):
     return result
 
 
-def playMatch(gui, firstPlayer, secondPlayer, rounds):
+def playMatch(firstPlayer, secondPlayer, rounds):
     """
     function handling a match between two players. Each match may be composed of several games/rounds.
     @param <BattleshipsGraphics> gui, the graphic interface displaying the match.
@@ -54,32 +54,34 @@ def playMatch(gui, firstPlayer, secondPlayer, rounds):
     for game in range(rounds):
         firstPlayer.newRound()
         secondPlayer.newRound()
-        gui.turtle.clear()
-        gui.drawBoards()
-        gui.drawPlayer(firstPlayer.getName(), firstPlayer.getDescription(), 'left')
-        gui.drawPlayer(secondPlayer.getName(), secondPlayer.getDescription(), 'right')
-        gui.drawScore (scorePlayer1, scorePlayer2)
+        #gui.turtle.clear()
+        #gui.drawBoards()
+        #gui.drawPlayer(firstPlayer.getName(), firstPlayer.getDescription(), 'left')
+        #gui.drawPlayer(secondPlayer.getName(), secondPlayer.getDescription(), 'right')
+        #gui.drawScore (scorePlayer1, scorePlayer2)
         turn = (-1)**game
 
 
-        p1, p2 = playGame(gui, firstPlayer, secondPlayer, turn)
+        p1, p2 = playGame(firstPlayer, secondPlayer, turn)
          
         scorePlayer1 += p1
         scorePlayer2 += p2
-        gui.drawScore (scorePlayer1, scorePlayer2)
+        #gui.drawScore (scorePlayer1, scorePlayer2)
     
     if scorePlayer2 > scorePlayer1 :
-        gui.drawWinner('right')
+	print 'right is the winner'
+        #gui.drawWinner('right')
     elif scorePlayer2 == scorePlayer1:
         pass
     else:
-        gui.drawWinner('left')
+	print 'Left is the winner'
+        #gui.drawWinner('left')
     
     print "---------------- ",firstPlayer.getName(), scorePlayer1,"-",
     print scorePlayer2, secondPlayer.getName(), "----------------"
     return (scorePlayer1, scorePlayer2)
 
-def playGame(gui, firstPlayer, secondPlayer, turn):
+def playGame( firstPlayer, secondPlayer, turn):
     """
     function handling a game between two players (e.g. one single round).
     @param <BattleshipsGraphics> gui, the graphic interface displaying a round.
@@ -94,14 +96,16 @@ def playGame(gui, firstPlayer, secondPlayer, turn):
     for row in range(len(player1_board)):
         for col in range(len(player1_board[row])):
             if player1_board[row][col] == const.OCCUPIED:
-                gui.drawBoat('right', row, col)
+		print 'right boats'
+                #gui.drawBoat('right', row, col)
             
     player2_board = secondPlayer.deployFleet()
 
     for row in range(len(player2_board)):
         for col in range(len(player2_board[row])):
             if player2_board[row][col] == const.OCCUPIED:
-                gui.drawBoat('left', row, col)
+                #gui.drawBoat('left', row, col)
+		print 'left boats'
     
     
 
@@ -112,9 +116,11 @@ def playGame(gui, firstPlayer, secondPlayer, turn):
             i1,i2 = firstPlayer.chooseMove()
             outcome = giveOutcome(player2_board, i1, i2)
             if outcome == const.HIT:
-                gui.drawHit('left', i1, i2)
+		print 'left hit at' + str(i1) + ':' + str(i2)
+                #gui.drawHit('left', i1, i2)
             else:
-                gui.drawMiss('left', i1, i2)
+		print 'left miss at' + str(i1) + ':' + str(i2) 
+                #gui.drawMiss('left', i1, i2)
                  
             firstPlayer.setOutcome(outcome, i1, i2)
             secondPlayer.getOpponentMove(i1, i2)
@@ -127,9 +133,11 @@ def playGame(gui, firstPlayer, secondPlayer, turn):
             i1,i2 = secondPlayer.chooseMove()
             outcome = giveOutcome(player1_board, i1, i2)
             if outcome == const.HIT:
-                gui.drawHit('right', i1, i2)
+		print 'right hit at' + str(i1) + ':' + str(i2)
+                #gui.drawHit('right', i1, i2)
             else:
-                gui.drawMiss('right', i1, i2)
+		print 'right miss at' + str(i1) + ':' + str(i2)
+                #gui.drawMiss('right', i1, i2)
                 
             secondPlayer.setOutcome(outcome, i1, i2)
             firstPlayer.getOpponentMove(i1, i2)
@@ -172,8 +180,8 @@ while True:
     player2.acknowledgeConnection()
     print "player",player2.getName(),"is connected..."
  
-    gui = BattleshipsGraphics(const.GRID_SIZE)
-    playMatch(gui, player1, player2, const.ROUNDS)
+    #gui = BattleshipsGraphics(const.GRID_SIZE)
+    playMatch(player1, player2, const.ROUNDS)
 
     player1.close()                                         # Close the connection
     player2.close()                                         # Close the connection
@@ -182,7 +190,7 @@ while True:
 
 
 ## Must be the last line of code 
-gui.screen.exitonclick()
+#gui.screen.exitonclick()
 
 
 

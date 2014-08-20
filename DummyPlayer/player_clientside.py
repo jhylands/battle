@@ -16,7 +16,7 @@ import const
 def main():
     game_server = socket.socket(socket.AF_INET, socket.SOCK_STREAM) # Create a socket object
     if const.GAME_SERVER_ADDR == '':        
-        host = 'raspberrypi' # Get local machine name
+        host = socket.gethostname() # Get local machine name
 	print host
         game_server.connect((host, const.GAME_SERVER_PORT))
     else:
