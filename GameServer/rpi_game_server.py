@@ -181,11 +181,15 @@ while True:
     print "player",player2.getName(),"is connected..."
  
     #gui = BattleshipsGraphics(const.GRID_SIZE)
-    playMatch(player1, player2, 5)
-
-    player1.close()                                         # Close the connection
-    player2.close()                                         # Close the connection
+    try:
+	    playMatch(player1, player2, 5)
+	    player1.close()                                         # Close the connection
+	    player2.close()                                         # Close the connection
     
+    except:
+	    player1.close()                                         # Close the connection
+	    player2.close()                                         # Close the connection
+
     break                                                   # End of game, exit game loop
 
 

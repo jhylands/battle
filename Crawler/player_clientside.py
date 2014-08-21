@@ -29,7 +29,7 @@ def main():
     if status == "connected":
         while True:
             request = game_server.recv(1024)
-            print "dummy side rqt:", request, "|"
+            #print "dummy side rqt:", request, "|"
             request = eval(request)
             
             if request[0] == "deployFleet":

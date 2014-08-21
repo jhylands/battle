@@ -8,7 +8,7 @@ Created on 7 Aug 2014
 
 from random import randint
 import const
-
+import time
 # The variable representing our game board, containing our fleet and the moves made by the opponent.
 playerBoard = None
 
@@ -16,16 +16,46 @@ playerBoard = None
 opponentBoard = None
 
 # The variable representing our next targets
-targets = [{'x': 1 ,'y': 1 }]
+targets = [{'x': 5 ,'y': 5 }]
 
 # The variable representing the result of our last shot so we can use it in our desition
 confirmShot = {'killed' : const.EMPTY}
 
+#make a function to validate that a set of coordinates are on the L shaped board
+def XYValid(x,y):
+    if ((x>=0) and (y>=0) and (x<12 and y<12)) and ((x>5 and y>5) or (y<6)):
+	return True
+    else:
+	return False
+#confirm the square has not already been guessed at 
+def noSecondGuess(x,y,board,targets):
+    ToReturn = False
+    try:
+	if targets.index({'x' : x, 'y' : y}) >-1:
+	    print 'Already in list'
+    except:
+	if board[x][y]==const.EMPTY:
+	    ToReturn = True
+    return ToReturn
+#make a function to initiate the list of guesses
+def initGuessList():
+    for i in range(0,11,2):
+	for n in range(0,11,2):
+	    if XYValid(n,i):
+		guessList.append({'x' : n, 'y' : i})
+    for i in range(1,11,2):
+	for n in range(1,11,2):
+	    if XYValid(n,i):
+		guessList.append({'x' : n, 'y' : i})
+
+# Make a list of the sensible places to gues
+guessList = []
+initGuessList() 	    
 # Enter your own player name
-playerName = "Dummy Player" 
+playerName = "Crawler" 
 
 # Enter your own player description, e.g. what kind of strategy has been used.
-playerDescription = "Moves are chosen randomly, may hit the same place more than once."
+playerDescription = "Moves are chosen randomly on a chessboard until a hit then the algo crawls along the hit looking for other hits"
             
 
 def initBoards():                
@@ -79,23 +109,56 @@ def chooseMove():
     # Knowledge about opponent's board is completely ignored (hence the name of the player),
     # You definitely want to change that.
     """
-    global playerBoard, opponentBoard, targets, confirmShot
+    global playerBoard, opponentBoard, targets, confirmShot, guessList
     #if we just got a hit add the surrounding blocks as educated guesses to targets array
     if confirmShot['killed'] == const.HIT:
-	for i in range(-1, 1):
-	    for n in range(-1, 1):
-		 x = confirmShot['x'] + i
-		 y = confirmShot['y'] + n
-		 #check their not bellow zero and not in the L bit and they are both less that 12
-		 if ((x>=0) and (y>=0)) and ((x<6 and y>6) or (x>5 and y<6) or (y>5 and x<6)) and (x<12 and y<12) and opponentBoard[x][y] == const.EMPTY:
-			#add that
-			targets.append({'x': x, 'y' : y})
+	for rack in opponentBoard:
+		print rack
+	#time.sleep(1)
+	counter = 0
+	print 'Confirmed kill at: (' + str(confirmShot['x']) + "," + str(confirmShot['y']) + ')'
+	i = range(-1,2)
+	for Xer in i:
+		for Yer in i:
+			x = confirmShot['x'] + Xer
+			y = confirmShot['y'] + Yer	
+			counter = counter + 1
+			if XYValid(x,y):
+			    if noSecondGuess(x,y,opponentBoard,targets):
+				 targets.append({'x': x, 'y' : y})
+				
+
+	if counter < 9:
+	    print counter
+	    time.sleep(20)
+#			#check their not bellow zero and not in the L bit and they are both less that 12
+
+#				try:
+#				    if opponentBoard[x][y] == const.EMPTY:
+#					try:
+#						print targets.index({'x' : x, 'y': y})
+#						print 'Already in list'
+#						time.sleep(2)
+#						break
+#					except:
+#						#add that
+#						 print "Adding:(" + str(x) + "," + str(y) + ") to the list of possible targets"
+#				    break
+#				except IndexError:
+#					 #if for some reason a guess is not on the board
+#					 print 'ERROR: ' + str(x) + ":" + str(y) + 'out of range'
+#   
     #if we haven't got any educated guesses make a random one
     if len(targets)==0:
-	    row = randint(0,len(opponentBoard)-1)
-	    col = randint(0,len(opponentBoard[row])-1)
-	    targets.append({'x' : row, 'y' : col })
-    target = targets.pop()
+	    targets.append(guessList.pop())
+	    print 'Random target selected!'
+    try:
+	target = targets.pop()
+    except IndexError:
+	target = {'x' : 5, 'y' : 5}	
+	print 'pop ERROR!'
+    print 'Targets length:' + str(targets)
+    #time.sleep(3)
     return target['x'],target['y']
 
 def setOutcome(entry, i1, i2):
@@ -137,7 +200,7 @@ def newRound():
     ability to update your strategy.
     Currently does nothing.
     """
-    pass
+    initGuessList()
 
 def newPlayer():
     """
