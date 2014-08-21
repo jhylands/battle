@@ -153,9 +153,9 @@ def playGame( firstPlayer, secondPlayer, turn):
     else:
         result = (1,0)
         
-    time.sleep(2)
 
     print "---------------- " + winner + "is the winner in " + str(shots) + "shots ----------------"
+    time.sleep(2)
     
     return result
 
@@ -181,7 +181,7 @@ while True:
     print "player",player2.getName(),"is connected..."
  
     #gui = BattleshipsGraphics(const.GRID_SIZE)
-    playMatch(player1, player2, const.ROUNDS)
+    playMatch(player1, player2, 5)
 
     player1.close()                                         # Close the connection
     player2.close()                                         # Close the connection
