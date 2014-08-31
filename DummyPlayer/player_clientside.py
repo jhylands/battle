@@ -61,11 +61,15 @@ def main():
             elif request[0] == "getOpponentMove":
                 player.getOpponentMove(request[1], request[2])                    
                 game_server.send(const.ACKNOWLEDGED)    # used for client/server synchronisation purpose
-                
+            
+	    elif request[0] == 'pin': #get the pin to join game
+		pin = raw_input("Game Pin:")
+		game_server.send(str(pin))
+
             else:
                 # unknown request so must be either end of game or a fatal error. Exit the game loop
                 print request
-                game_server.send(const.ACKNOWLEDGED)    # used for client/server synchronisation purpose
+                game_server.send(0000)    # used for client/server synchronisation purpose
                 break
             
 

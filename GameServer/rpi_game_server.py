@@ -6,12 +6,11 @@ Created on 7 Aug 2014
 #!/usr/bin/python # This is server.py file
 import socket # Import socket module
 import time
-
+import threading
 
 import const
 #from battleships_gui import BattleshipsGraphics
 from player_socket import PlayerSocket
-
 
 ##########################################
 ##           PARAMETERS SETTING         ##
@@ -165,20 +164,30 @@ def playGame( firstPlayer, secondPlayer, turn):
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)    # Create a socket object
 sock.bind((const.GAME_SERVER_ADDR, const.GAME_SERVER_PORT)) # The same port as used by the server & clients
-sock.listen(2)                                              # Now wait for client connection (max of 2 client at a time).
 
 while True:
-    client1, addr1 = sock.accept()                          # Establish connection with first client.
-    print 'Got connection from', addr1
-    player1 = PlayerSocket(client1, addr1)                  # Create first player with that connection
-    player1.acknowledgeConnection()
-    print "player",player1.getName(),"is connected..."    
-
-    client2, addr2 = sock.accept()                          # Establish connection with second client.
-    print 'Got connection from', addr2
-    player2 = PlayerSocket(client2, addr2)                  # Create second player with second connection
-    player2.acknowledgeConnection()
-    print "player",player2.getName(),"is connected..."
+    incorrectPin = True
+    while incorrectPin:
+	sock.listen(1)                                              # Now wait for client connection (max of 2 client at a time).
+	client1, addr1 = sock.accept()                          # Establish connection with first client.
+	print 'Got connection from', addr1
+	tempPlayer = PlayerSocket(client1, addr1)
+	if tempPlayer.getPin() == const.PIN:
+	    incorrectPin = False                  # Check player has correct pin
+	    player1 = tempPlayer              # Create first player with that connection
+	    player1.acknowledgeConnection()
+	    print "player",player1.getName(),"is connected..."    
+    incorrectPin = True
+    while incorrectPin:
+	sock.listen(1)                                              # Now wait for client connection (max of 2 client at a time).
+	client1, addr1 = sock.accept()                          # Establish connection with first client.
+	print 'Got connection from', addr1
+	tempPlayer = PlayerSocket(client1, addr1)
+	if tempPlayer.getPin() == const.PIN:
+	    incorrectPin = False                  # Check player has correct pin
+	    player2 = tempPlayer              # Create first player with that connection
+	    player2.acknowledgeConnection()
+	    print "player",player2.getName(),"is connected..."    
  
     #gui = BattleshipsGraphics(const.GRID_SIZE)
     try:

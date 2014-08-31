@@ -37,6 +37,13 @@ def noSecondGuess(x,y,board,targets):
 	if board[x][y]==const.EMPTY:
 	    ToReturn = True
     return ToReturn
+#function to shuffle the order of an array
+def shuffle(pack):
+    for i in range(1,randint(0,len(pack)*3)):
+	cardNo = randint(0,len(orderedPack)-1))
+	pack.append(pack[cardNo])
+	del pack[cardNo]
+    return pack
 #make a function to initiate the list of guesses
 def initGuessList():
     for i in range(0,11,2):
@@ -63,6 +70,7 @@ def getBoard(board):
 	for ship in ships:
 	    #chose random position
 	    invalidPosition = True
+	    
 	    while invalidPosition:
 		col = randint(0,len(board)-1)
 		row = randint(0,len(board[col])-1)
@@ -83,7 +91,6 @@ def getBoard(board):
 			element['y'] = element['y']+row
 			board[element['x']][element['y']] = const.OCCUPIED
 	return board
-
 # Make a list of the sensible places to gues
 guessList = []
 initGuessList() 	    

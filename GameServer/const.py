@@ -41,3 +41,5 @@ GAME_SERVER_PORT = 12345
 # Constant used in the communication to acknowledge a received message
 # Typically this constant is used to synchronise the clients and the server
 ACKNOWLEDGED = 'ACK'
+
+PIN = 0000

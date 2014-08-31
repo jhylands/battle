@@ -55,5 +55,7 @@ class PlayerSocket(object):
         self._socket.send("('GameOver', None)")
         print self._socket.recv(1024) # used for client/server synchronisation purpose
         self._socket.close()
-    
-    
+        
+    def getPin(self):
+	self._socket.send("('pin', None)")
+	return self._socket.recv(1024)
