@@ -38,7 +38,8 @@ def testShip(shipNo,x,y,rotation):
 	coordinates = rotate(pannel,angle)
         if not XYValid(coordinates['x'],coordinates['y']):
 	    valid = False
-    validCombinations.append({'ship':shipNo,'rotation':rotation,'x':x,'y':y})
+    if valid:
+	validCombinations.append({'ship':shipNo,'rotation':rotation,'x':x,'y':y})
 
 def getBoard():
 	for ship in ships:
@@ -59,15 +60,15 @@ def getBoard():
 			element['y'] = element['y']+row
 			board[element['x']][element['y']] = 8
 
-for shipNo in range(0,len(ships)-1):
-    for rotation in range(0,shipSpin[shipNo]-1):
+for shipNo in range(0,len(ships)):
+    for rotation in range(0,shipSpin[shipNo]):
 	for x in range(0,12):
-	    for y in range(0,6):
+	    for y in range(0,7):
 		testShip(shipNo,x,y,rotation)
 	    if x>6:
 		for y in range(7,12):
 		    testShip(shipNo,x,y,rotation)
 f = open('validCombinations.dat','w')
 f.write(str(validCombinations))
-f.close
+f.close()
 
