@@ -1,11 +1,17 @@
 from random import randint #import random numbers
 import math
+import time
 def rotate(coordinates,angle):
+    #get the coordinates to local variables so its easyer to see whats going on
     x = coordinates['x']
     y = coordinates['y']
-    X = int(x * math.cos(angle) - y * math.sin(angle))
-    Y = int(y * math.sin(angle) + y * math.cos(angle))
-    return {'x':X,'y':Y}
+    xN = y
+    yN = -x
+    X = int(xN * math.cos(angle) - yN * math.sin(angle))
+    Y = int(xN * math.sin(angle) + yN * math.cos(angle))
+    Xn = - Y
+    Yn = X
+    return {'x':Xn,'y':Yn}
 #array to hold possible combinations
 validCombinations = []
 #array of all the ships
@@ -36,7 +42,7 @@ def testShip(shipNo,x,y,rotation):
     valid = True
     for pannel in ships[shipNo]:
 	coordinates = rotate(pannel,angle)
-        if not XYValid(coordinates['x'],coordinates['y']):
+        if not XYValid(coordinates['x']+x,coordinates['y']+y):
 	    valid = False
     if valid:
 	validCombinations.append({'ship':shipNo,'rotation':rotation,'x':x,'y':y})
@@ -68,7 +74,8 @@ for shipNo in range(0,len(ships)):
 	    if x>6:
 		for y in range(7,12):
 		    testShip(shipNo,x,y,rotation)
+
 f = open('validCombinations.dat','w')
 f.write(str(validCombinations))
 f.close()
-
+print rotate({'x': 1, 'y': 0},math.pi/2)
