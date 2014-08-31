@@ -5,13 +5,9 @@ def rotate(coordinates,angle):
     #get the coordinates to local variables so its easyer to see whats going on
     x = coordinates['x']
     y = coordinates['y']
-    xN = y
-    yN = -x
-    X = int(xN * math.cos(angle) - yN * math.sin(angle))
-    Y = int(xN * math.sin(angle) + yN * math.cos(angle))
-    Xn = - Y
-    Yn = X
-    return {'x':Xn,'y':Yn}
+    X = int(x * math.cos(angle) - y * math.sin(angle))
+    Y = int(x * math.sin(angle) + y * math.cos(angle))
+    return {'x':X,'y':Y}
 #array to hold possible combinations
 validCombinations = []
 #array of all the ships
@@ -47,25 +43,6 @@ def testShip(shipNo,x,y,rotation):
     if valid:
 	validCombinations.append({'ship':shipNo,'rotation':rotation,'x':x,'y':y})
 
-def getBoard():
-	for ship in ships:
-	    #chose random position
-	    invalidPosition = True
-	    while invalidPosition:
-		col = randint(0,11)
-		row = randint(0,11)
-		thisTrans=True
-		#look to see if the position is valid
-		for element in ship:
-		    if not (XYValid(element['x']+col,element['y']+row) and board[element['x']][element['y']]==0):
-			thisTrans = False	
-		if thisTrans:
-		    invalidPosition = False
-		    for element in ship:
-			element['x'] = element['x']+col
-			element['y'] = element['y']+row
-			board[element['x']][element['y']] = 8
-
 for shipNo in range(0,len(ships)):
     for rotation in range(0,shipSpin[shipNo]):
 	for x in range(0,12):
@@ -78,4 +55,15 @@ for shipNo in range(0,len(ships)):
 f = open('validCombinations.dat','w')
 f.write(str(validCombinations))
 f.close()
-print rotate({'x': 1, 'y': 0},math.pi/2)
+print rotate({'x': -3, 'y': -1},math.pi*3/2)
+print rotate({'x': -3, 'y': 0},math.pi*3/2)
+print rotate({'x': -3, 'y': 1},math.pi*3/2)
+print rotate({'x': 0, 'y': 0},math.pi*3/2)
+print rotate({'x': -1, 'y': 0},math.pi*3/2)
+print rotate({'x': -2, 'y': 0},math.pi*3/2)
+print 'GAP'
+for pannel in ships[3]:
+    coordinates = rotate(pannel,(math.pi*3/2))
+    print coordinates
+    if not XYValid(coordinates['x']+11,coordinates['y']+11):
+        print "No big motherfucking error!"
