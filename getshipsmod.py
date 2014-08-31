@@ -5,9 +5,19 @@ def rotate(coordinates,angle):
     #get the coordinates to local variables so its easyer to see whats going on
     x = coordinates['x']
     y = coordinates['y']
-    X = int(x * math.cos(angle) - y * math.sin(angle))
-    Y = int(x * math.sin(angle) + y * math.cos(angle))
+    X = x * math.cos(angle) - y * math.sin(angle)
+    Y = x * math.sin(angle) + y * math.cos(angle)
     return {'x':X,'y':Y}
+#converting from battleship coordinate system to normal one with origin 11,0 in battle ship coordinates
+def ZtoW(coordinates):
+    u = coordinates['y']
+    v = -coordinates['x']
+    return {'x': u ,'y': v }
+#a function such that WtoZ(ZtoW(coordinates)) = coordinates
+def WtoZ(coordinates):
+    u = -coordinates['y']
+    v = coordinates['x']
+    return {'x':u,'y':v}
 #array to hold possible combinations
 validCombinations = []
 #array of all the ships
@@ -37,8 +47,8 @@ def testShip(shipNo,x,y,rotation):
     angle = math.pi*rotation/2
     valid = True
     for pannel in ships[shipNo]:
-	coordinates = rotate(pannel,angle)
-        if not XYValid(coordinates['x']+x,coordinates['y']+y):
+	coordinates = WtoZ(rotate(ZtoW(pannel),angle))
+        if not XYValid(round(coordinates['x'])+x,round(coordinates['y'])+y):
 	    valid = False
     if valid:
 	validCombinations.append({'ship':shipNo,'rotation':rotation,'x':x,'y':y})
@@ -55,15 +65,7 @@ for shipNo in range(0,len(ships)):
 f = open('validCombinations.dat','w')
 f.write(str(validCombinations))
 f.close()
-print rotate({'x': -3, 'y': -1},math.pi*3/2)
-print rotate({'x': -3, 'y': 0},math.pi*3/2)
-print rotate({'x': -3, 'y': 1},math.pi*3/2)
-print rotate({'x': 0, 'y': 0},math.pi*3/2)
-print rotate({'x': -1, 'y': 0},math.pi*3/2)
-print rotate({'x': -2, 'y': 0},math.pi*3/2)
-print 'GAP'
-for pannel in ships[3]:
-    coordinates = rotate(pannel,(math.pi*3/2))
-    print coordinates
-    if not XYValid(coordinates['x']+11,coordinates['y']+11):
-        print "No big motherfucking error!"
+
+print WtoZ(rotate(ZtoW({'x':3,'y':1}),math.pi*3/2))
+print rotate({'x':1,'y':-3},math.pi*3/2)
+print rotate({'x':1,'y':-3},4.712)
