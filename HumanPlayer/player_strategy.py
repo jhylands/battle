@@ -16,7 +16,7 @@ playerBoard = None
 opponentBoard = None
 
 # Enter your own player name
-playerName = "My Player" 
+playerName = "Dummy Player" 
 
 # Enter your own player description, e.g. what kind of strategy has been used.
 playerDescription = "Moves are chosen randomly, may hit the same place more than once."
@@ -41,52 +41,36 @@ def deployFleet():
     initBoards()
     # Simple example which always positions the ships in the same place
     # This is a very bad idea! You will want to do something random
-    
-    # Destroyer (2 squares)
-    playerBoard[0][5]=const.OCCUPIED
-    playerBoard[1][5]=const.OCCUPIED
-    
-    # Cruiser (3 squares)
-    playerBoard[1][1:4]=[const.OCCUPIED]*3
-    
-    # Battleship (4 squares)
-    playerBoard[6][6]=const.OCCUPIED
-    playerBoard[6][7]=const.OCCUPIED
-    playerBoard[6][8]=const.OCCUPIED
-    playerBoard[6][9]=const.OCCUPIED
-    
-    # Hovercraft (6 squares)
-    playerBoard[8][2]=const.OCCUPIED
-    playerBoard[9][1:4]=[const.OCCUPIED]*3
-    playerBoard[10][1:4:2]=[const.OCCUPIED]*2
-    
-    # Aircraft carrier (6 squares)
-    playerBoard[9][5:9]=[const.OCCUPIED]*4
-    playerBoard[8][5]=const.OCCUPIED
-    playerBoard[10][5]=const.OCCUPIED
+    for i in range(0,21):
+	x=input('X:')
+	y=input('y:')
+	playerBoard[x][y]=const.OCCUPIED
     return playerBoard
 
 def chooseMove():
     """
     Should Decide what move to make based on current state of opponent's board and return it 
     # currently Completely random strategy,
-    # Knowledge about opponent's board is completely ignored,
+    # Knowledge about opponent's board is completely ignored (hence the name of the player),
     # You definitely want to change that.
     """
     global playerBoard, opponentBoard
     
-    row = randint(0,len(opponentBoard)-1)
-    col = randint(0,len(opponentBoard[row])-1)
+    row = input('x:')
+    col = input('y:')
     
     return row, col
 
 def setOutcome(entry, i1, i2):
     """
-    Receive the outcome of a shot
+    Receives the outcome of the shot
     expected value is const.HIT for hit and const.MISSED for missed
     """
     global playerBoard, opponentBoard
-    
+    if entry == const.HIT:
+	print "Hit"
+    else:
+	print "miss"
     if entry == const.HIT or entry == const.MISSED:
         opponentBoard[i1][i2] = entry # record the result on the board
     else:

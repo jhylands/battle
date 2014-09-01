@@ -25,6 +25,14 @@ def WtoZ(coordinates):
 #carry out a rotation in battleship space
 def doRotation(coordinates,angle):
     return WtoZ(rotate(ZtoW(coordinates),angle))
+def findMax(array):
+    max = 0
+    for i in range(0,len(array)):
+	for n in range(0,len(array[i])):
+	   if max < array[i][n]:
+		max = array[i][n]
+		coordinates = {'x':i,'y':n}
+    return coordinates
 #array to hold possible combinations
 validCombinations = [[],[],[],[],[]]
 #array of all the ships
@@ -43,40 +51,52 @@ ships.append([{'x' : 0, 'y' : 0},{'x' : 1, 'y' : 0},{'x' : 1, 'y' : -1},{'x' : 1
 ships.append([{'x' : 0, 'y' : 0},{'x' : 1, 'y' : 0},{'x' : 2, 'y' : 0},{'x' : 3, 'y' : 0},{'x' : 3, 'y' : -1},{'x' : 3, 'y' : 1}])
 
 #check the validity of coordinates
-def XYValid(x,y):
+def XYValid(x,y,notHere = None):
+    if notHere is None:
+	notHere = []
     if ((x>=0) and (y>=0) and (x<12 and y<12)) and ((x>5 and y>5) or (y<6)):
-	return True
+	Valid = True
+	for notPoint in notHere:
+	    if x==notPoint['x'] and y==notPoint['y']:
+		Valid = False
+	return Valid
     else:
 	return False
 board = [[0]*12 for x in range(12)]
 
-def testShip(shipNo,x,y,rotaryMultiple):
+def testShip(shipNo,x,y,rotaryMultiple,invalid = None):
+    if invalid is None:
+	invalid = []
     angle = math.pi*rotaryMultiple/2
     valid = True
     for pannel in ships[shipNo]:
 	coordinates = doRotation(pannel,angle)
-        if not XYValid(round(coordinates['x'])+x,round(coordinates['y'])+y):
+        if not XYValid(round(coordinates['x'])+x,round(coordinates['y'])+y,invalid):
 	    valid = False
     if valid:
 	validCombinations[shipNo].append({'rotation':rotaryMultiple,'x':x,'y':y})
 	for pannel in ships[shipNo]:
 	    coordinates = doRotation(pannel,angle)
 	    board[int(round(coordinates['x'])+x)][int(round(coordinates['y'])+y)] += 1
-
-#look for posible positions of ships
-for shipNo in range(0,len(ships)):
-    for rotation in range(0,shipSpin[shipNo]):
-	for x in range(0,12):
-	    for y in range(0,7):
-		testShip(shipNo,x,y,rotation)
-	    if x>6:
-		for y in range(7,12):
-		    testShip(shipNo,x,y,rotation)
+shotList = []
+for loop in range(0,42):
+    #look for posible positions of ships
+    for shipNo in range(0,len(ships)):
+        for rotation in range(0,shipSpin[shipNo]):
+	    for x in range(0,12):
+	        for y in range(0,7):
+		    testShip(shipNo,x,y,rotation,shotList)
+	        if x>6:
+	            for y in range(7,12):
+		        testShip(shipNo,x,y,rotation,shotList)
+    shotList.append(findMax(board))
+    board = [[0]*12 for x in range(12)]
+print shotList
 #look for posible conflics between 2 ships
 dualshipValid = []
 #compare ships
 #for ship1No in range(0,5):
-#    for ship2No in range(ship1No,4):
+ #   for ship2No in range(ship1No,4):
 #	#At this level we are looking at the conflicts between two ships
 #	#compare placement solutions
 #	counter = 0
@@ -102,5 +122,3 @@ f = open('validCombinations.dat','w')
 f.write("single = " + str(validCombinations))
 #f.write(str(dualshipValid))
 f.close()
-for row in board:
-    print row

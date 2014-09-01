@@ -1,0 +1,21 @@
+1 - Nothing
+2 -D
+3 -C
+4 -B
+5 -(D+C)
+6 -(h),(A),(B+D)
+7 -(B+C)
+8 -(H+D),(A+D)
+9 -(D+C+B),(A+C),(H+C)
+10-(B+H),(B+A)
+11-(H+D+C),(A+D+C)
+12-(A+H),(D+B+A),(D+B+H)
+13-(H+B+C),(A+B+C)
+14- (H+A+D)
+15-(A+D+C+B),(H+D+C+B),(H+A+C)
+16- (H+A+B)
+17- (H+A+D+C)
+18- (H+A+B+D)
+19- (H+A+B+C)
+20- Nothing
+21- (A+B+C+D+H)
