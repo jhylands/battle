@@ -87,6 +87,9 @@ def getBoard(board):
 # Make a list of the sensible places to gues
 guessList = []
 initGuessList() 	    
+#Statistics
+#get number of moves that are guesses
+ges = 0
 # Enter your own player name
 playerName = "Crawler" 
 
@@ -116,31 +119,6 @@ def deployFleet():
     playerBoard = getBoard(playerBoard)
     for rack in playerBoard:
 	print rack
-    # Simple example which always positions the ships in the same place
-    # This is a very bad idea! You will want to do something random
-    
-    # Destroyer (2 squares)
-#    playerBoard[0][5]=const.OCCUPIED
-#    playerBoard[1][5]=const.OCCUPIED
-#    
-#    # Cruiser (3 squares)
-#    playerBoard[1][1:4]=[const.OCCUPIED]*3
-#    
-#    # Battleship (4 squares)
-#    playerBoard[6][6]=const.OCCUPIED
-#    playerBoard[6][7]=const.OCCUPIED
-#    playerBoard[6][8]=const.OCCUPIED
-#    playerBoard[6][9]=const.OCCUPIED
-#    
-#    # Hovercraft (6 squares)
-#    playerBoard[8][2]=const.OCCUPIED
-#    playerBoard[9][1:4]=[const.OCCUPIED]*3
-#    playerBoard[10][1:4:2]=[const.OCCUPIED]*2
-#    
-#    # Aircraft carrier (6 squares)
-#    playerBoard[9][5:9]=[const.OCCUPIED]*4
-#    playerBoard[8][5]=const.OCCUPIED
-#    playerBoard[10][5]=const.OCCUPIED
     return playerBoard
 
 def chooseMove():
@@ -150,7 +128,7 @@ def chooseMove():
     # Knowledge about opponent's board is completely ignored (hence the name of the player),
     # You definitely want to change that.
     """
-    global playerBoard, opponentBoard, targets, confirmShot, guessList
+    global playerBoard, opponentBoard, targets, confirmShot, guessList, ges
     #if we just got a hit add the surrounding blocks as educated guesses to targets array
     if confirmShot['killed'] == const.HIT:
 	for rack in opponentBoard:
@@ -170,30 +148,11 @@ def chooseMove():
 				
 
 	
-	print counter
-	time.sleep(20)
-#			#check their not bellow zero and not in the L bit and they are both less that 12
-
-#				try:
-#				    if opponentBoard[x][y] == const.EMPTY:
-#					try:
-#						print targets.index({'x' : x, 'y': y})
-#						print 'Already in list'
-#						time.sleep(2)
-#						break
-#					except:
-#						#add that
-#						 print "Adding:(" + str(x) + "," + str(y) + ") to the list of possible targets"
-#				    break
-#				except IndexError:
-#					 #if for some reason a guess is not on the board
-#					 print 'ERROR: ' + str(x) + ":" + str(y) + 'out of range'
-#   
     #if we haven't got any educated guesses make a random one
     if len(targets)==0:
 	    try:
     	        targets.append(guessList.pop())
-	        print 'Random target selected!'
+		ges +=1
 	    except:
 		print 'board error'
     try:
@@ -201,7 +160,7 @@ def chooseMove():
     except IndexError:
 	target = {'x' : 5, 'y' : 5}	
 	print 'pop ERROR!'
-    print 'Targets length:' + str(targets)
+    print 'Targets length:' + str(targets) + "Ges: " + str(ges)
     #time.sleep(3)
     return target['x'],target['y']
 

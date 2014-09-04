@@ -153,7 +153,7 @@ def playGame( firstPlayer, secondPlayer, turn):
         result = (1,0)
         
 
-    print "---------------- " + winner + "is the winner in " + str(shots) + "shots ----------------"
+    print "---------------- " + winner + "is the winner in " + str(shots) + "shots.  " + str(round(2100/shots,1)) + "% efficient----------------"
     time.sleep(2)
     
     return result
