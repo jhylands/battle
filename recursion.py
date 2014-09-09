@@ -195,6 +195,15 @@ def addToBoard(board,shipCoords):
 	    break
     else:
 	return True,board
+#function to check that none of the blob is uncovered by the combination
+#fin
+def blobCovered(board,hitList):
+    for hit in hitList:
+	if not board[hit['x']][hit['y']]
+	    return False
+	    break
+    else:
+	return True
 
 #function to list valid combinations give a list of ships, their position rotation and origin
 def checkCombinations(shipPlace,rotationList,pannelList,hitList,missList):
@@ -207,10 +216,13 @@ def checkCombinations(shipPlace,rotationList,pannelList,hitList,missList):
 	    board = oriBoard
 	    shipCoords = []
 	    for x in range(0,len(shipPlace)):
-		shipCoords.append = getShipCoords(shipPlace[x],rotation[x],origin[x])
+		shipCoords += getShipCoords(shipPlace[x],rotation[x],origin[x])
 	    valid,board = addToBoard(board,shipCoords)
-	    if not valid:
-		#break
+	    if valid and blobCovered(board,hitList):
+			validCombination += shipCoords
+    return validCombinations
+		
+		#add combination to validCombinations
 #function to get an array of the ships coordinates given its rotation and origin
 #fin
 def getShipCoords(aShip,rotation,origin):
