@@ -30,18 +30,6 @@ def WtoZ(coordinates):
 def doRotation(coordinates,angle):
     return WtoZ(rotate(ZtoW(coordinates),angle))
 #-----------------------------------------------------------------------------------------------
-#check the validity of coordinates
-def XYValid(x,y,notHere = None):
-    if notHere is None:
-	notHere = []
-    if ((x>=0) and (y>=0) and (x<12 and y<12)) and ((x>5 and y>5) or (y<6)):
-	Valid = True
-	for notPoint in notHere:
-	    if x==notPoint['x'] and y==notPoint['y']:
-		Valid = False
-	return Valid
-    else:
-	return False
 
 #DEFINE THE SHIPS----------------------------------------------------------------------------------
 #array of all the ships
@@ -58,8 +46,8 @@ ships.append([{'x' : 0, 'y' : 0},{'x' : 1, 'y' : 0},{'x' : 2, 'y' : 0},{'x' : 3,
 ships.append([{'x' : 0, 'y' : 0},{'x' : 1, 'y' : 0},{'x' : 1, 'y' : -1},{'x' : 1, 'y' : 1},{'x' : 2, 'y' : -1},{'x' : 2, 'y' : 1}])
 #Aircraft carrier
 ships.append([{'x' : 0, 'y' : 0},{'x' : 1, 'y' : 0},{'x' : 2, 'y' : 0},{'x' : 3, 'y' : 0},{'x' : 3, 'y' : -1},{'x' : 3, 'y' : 1}])
-
 #-----------------------------------------------------------------------------------------------------
+#MAIN ALGORITHM---------------------------------------------------------------------------------------
 
 #shipList is a list of the ships to use in current test
 #hitList is a list of hits in blob that must be covered
@@ -80,10 +68,8 @@ def recursion(hitList,shipList = None, missList = None, Notlist = None, n = None
     #if n not provided take 5 a defualt
     if n == None:
 	n=5
-
     #inisiate list of valid combinations
     validList=[]
-
     #loop through ships
     for i in range(0,n):
 	#but not ships already in use as each ship can only appear once
@@ -187,14 +173,18 @@ def createBoard(missList):
 #function to add ship to board
 #fin
 def addToBoard(board,shipCoords):
-    for coord in shipCoords:
-	if not board[coord['x']][coord['y']]:
-	    board[coord['x']][coord['y']] = True
-	else:
-	    return False, Board
-	    break
-    else:
-	return True,board
+    try
+	for coord in shipCoords:
+            if not board[coord['x']][coord['y']]:
+	        board[coord['x']][coord['y']] = True
+	    else:
+	        return False, Board
+	        break
+        else:
+	    return True,board
+    except:
+	return False, board
+
 #function to check that none of the blob is uncovered by the combination
 #fin
 def blobCovered(board,hitList):
@@ -238,11 +228,6 @@ def getShipCoords(aShip,rotation,origin):
 
 
 
-
-
-
-
-
 #OUTSIDE OF FINDING VALID COMBINATONS ----------------------------------------------------------
 #finds the best coordinates on the board
 def findMax(array):
@@ -253,38 +238,8 @@ def findMax(array):
 		max = array[i][n]
 		coordinates = {'x':i,'y':n}
     return coordinates
-#array to hold possible combinations
 
-#function that tests if a ship is possible given the ship, its position, rotation and any misses on the board
-def testShip(shipNo,x,y,rotaryMultiple,invalid = None):
-    if invalid is None:
-	invalid = []
-    angle = math.pi*rotaryMultiple/2
-    valid = True
-    for pannel in ships[shipNo]:
-	coordinates = doRotation(pannel,angle)
-        if not XYValid(round(coordinates['x'])+x,round(coordinates['y'])+y,invalid):
-	    valid = False
-    if valid:
-	validCombinations[shipNo].append({'rotation':rotaryMultiple,'x':x,'y':y})
-	for pannel in ships[shipNo]:
-	    coordinates = doRotation(pannel,angle)
-	    board[int(round(coordinates['x']+x))][int(round(coordinates['y']+y))] +=1
 
-#look for posible positions of ships
-#for each ship
-for shipNo in range(0,len(ships)):
-    #for each rotation of that ship
-    for rotation in range(0,shipSpin[shipNo]):
-	#for each x 
-	for x in range(0,12):
-     	    for y in range(0,7):
-  		testShip(shipNo,x,y,rotation,shotList)
-            if x>6:
-         	for y in range(7,12):
-      		    testShip(shipNo,x,y,rotation,shotList)
-		
-shotList.append(findMax(board))
 for row in board:
     print row
 print shotList
