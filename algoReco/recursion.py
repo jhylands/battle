@@ -13,8 +13,8 @@ def rotate(coordinates,angle):
     #get the coordinates to local variables so its easyer to see whats going on
     x = coordinates['x']
     y = coordinates['y']
-    X = x * math.cos(angle) - y * math.sin(angle)
-    Y = x * math.sin(angle) + y * math.cos(angle)
+    X = round(x * math.cos(angle) - y * math.sin(angle))
+    Y = round(x * math.sin(angle) + y * math.cos(angle))
     return {'x':X,'y':Y}
 #converting from battleship coordinate system to normal one with origin 11,0 in battle ship coordinates
 def ZtoW(coordinates):
@@ -53,9 +53,13 @@ ships.append([{'x' : 0, 'y' : 0},{'x' : 1, 'y' : 0},{'x' : 2, 'y' : 0},{'x' : 3,
 #function to inishiate a board and add the misses to it
 #fin
 def createBoard(missList):
+#    try:
+#	board = [[False]*(6 if x<6 else 12) for x in range(12)]
+#	for miss in missList:
+##	    board[miss['x']][miss['y']] = True
+#    except:
+#	print missList
     board = [[False]*(6 if x<6 else 12) for x in range(12)]
-    for miss in missList:
-	board[miss['x']][miss['y']] = True
     return board
 
 #function to add ship to board
@@ -86,32 +90,33 @@ def blobCovered(board,hitList):
 #add combination to validCombinations
 #function to get an array of the ships coordinates given its rotation and origin
 #fin
-def getShipCoords(aShip,rotation,origin):
+def getShipCoords(aShip,position,rotation,origin):
     global ships, shipSpin
     coords = []
-    for pannel in ships[shipPlace['ship']]:
-	coords.append(doRotation(pannel,shipSpin[ships[shipPlace['ship']]]*math.pi/2))
+    for pannel in ships[aShip]:
+	coords.append(doRotation(pannel,shipSpin[aShip]*math.pi/2))
     originTransformer = coords[origin]
     for x in range(0,len(coords)):
-	coords[x] = addVector(aShip,takeBFromA(coords[x],originTransformer))
+	coords[x] = addVector(position,takeBFromA(coords[x],originTransformer))
     return coords
 
 
 #function to list valid combinations give a list of ships, their position rotation and origin
-def checkCombinations(placementList,rotationList,pannelList,hitList,missList):
+def checkCombinations(shipList,placementList,rotationList,pannelList,hitList,missList):
     validCombinations = []
     #create the board with the misses already on
     oriBoard = createBoard(missList)
+    #select a set of rotations
     for rotation in rotationList:
+	#select a set of pannels as origins
 	for origin in pannelList:
-	    print placementList
-	    for place in placementList:
-		#for a rotation list and an origin list 
-	    	board = oriBoard
+	    #select a set of positions to place those origins
+	    for placement in placementList:
+		#resetboard
+	    	board = list(oriBoard)
 	    	shipCoords = []
-		print len(place)
-	    	for x in range(0,len(place)):
-		    shipCoords += getShipCoords(hitList[place[x]],rotation[x],origin[x])
+	    	for x in range(0,len(shipList)):
+		    shipCoords += getShipCoords(shipList[x],hitList[placement[x]],rotation[x],origin[x])
 		    valid,board = addToBoard(board,shipCoords)
 	    	if valid and blobCovered(board,hitList):
 		    validCombination += shipCoords
@@ -132,10 +137,10 @@ def addPannels(shipList,mainList = [],countingList = []):
         countingList.append(x)
 	#if we don't need to go any deeper add the counting array as an element of the main list
 	if len(shipList) ==0:
-	    mainList.append(countingList)
+	    mainList.append(list(countingList))
 	else:
 	    #otherwise recure deeper updating mainlist
-	    mainList = addPannels(mainList,countingList)
+	    mainList = addPannels(shipList,mainList,countingList)
 	#remove this loops countingList contribution so next loop can take its place
 	countingList.pop()
     #return the mainlist
@@ -156,16 +161,16 @@ def addRotary(ships,mainList = [],countingList = []):
 	#add this rotation to the counting list
         countingList.append(x)
 	#if we don't need to go any deeper add the counting array as an element of the main list
-	if len(ships) ==0:
-	    mainList.append(countingList)
+	if len(ships) == 0:
+	    mainList.append(list(countingList))
 	else:
 	    #otherwise recure deeper updating mainlist
-	    mainList = addRotary(mainList,countinglist)
+	    mainList = addRotary(ships,mainList,countingList)
 	#remove this loops countingList contribution so next loop can take its place
 	countingList.pop()
     #return the mainlist
     ships.append(ship)
-    return mainList
+    return list(mainList)
 
 
 #function to place the ships in their plain of the hitlist
@@ -184,33 +189,28 @@ def addPlacement(ships,hitListLength,start = None, mainList = None,countingList 
         countingList.append(x)
 	#if we don't need to go any deeper add the counting array as an element of the main list
 	if len(ships) == 0:
-	    mainList.append(countingList)
+	    mainList.append(list(countingList))
 	else:
 	    #otherwise recure deeper updating mainlist
-	    mainList += addPlacement(ships,hitListLength,(start+1),mainList,countinglist)
+	    mainList += addPlacement(ships,hitListLength,(start+1),mainList,countingList)
 	#remove this loops countingList contribution so next loop can take its place
 	countingList.pop()
     #return the mainlist
     ships.append(ship)
-    print "MainList: " + str(mainList)
-    return mainList
+    return list(mainList)
 
 #function to gather the information required to find the next best shot
 def test(shipList,hitList,missList):
-	print "ShipList:" + str(shipList)
 	#assign all the ships possitions
 	placementList= addPlacement(shipList,len(hitList))
 	#get them each a rotation
-	rotationList = addRotary(shipList)
+	rotationList = addRotary(shipList,[])
 	#get them each an origin
-	originList = addPannels(shipList)
+	originList = addPannels(shipList,[])
 	#placementList[placementCombination][ship]
 	#rotationlist[rotationCombination][ship]
 	#originList[pannelCombination][ship]
-	print "p:" + str(placementList)
-	print "R:" + str(rotationList)
-	print "O:" + str(originList)
-	return checkCombinations(placementList,rotationList,originList,hitList,missList)
+	return checkCombinations(shipList,placementList,rotationList,originList,hitList,missList)
 
 #shipList is a list of the ships to use in current test
 #hitList is a list of hits in blob that must be covered
@@ -241,13 +241,13 @@ def recursion(hitList,shipList = None, missList = None, notList = None, n = None
 	    shipList.append(i)#add current ship to shipList
      	    validList += test(shipList,hitList,missList)
 	    #if there are more hits then we have ships, look at possibilities that use more ships
-	    if len(hitList)>len(NotList):
+	    if len(hitList)>len(notList) and len(notList)<5:
 		#for futher recurtions remove i (the current ship represented by I) from the loops
-	        NotList.append(i)
+	        notList.append(i)
 		#use more ships in check
- 		ValidList += recursion(hitList,missList, shipList,notList,n)
+ 		validList += recursion(hitList,missList, shipList,notList,n)
 		#remove this ship from notlist as i is about to change to a new value
-	        Notlist.pop()
+	        notList.pop()
 	    #remove i from shipList as i is about to change
 	    shipList.pop()
     return validList

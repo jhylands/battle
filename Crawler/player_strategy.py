@@ -64,8 +64,11 @@ def getBoard(board):
 	    #chose random position
 	    invalidPosition = True
 	    while invalidPosition:
-		col = randint(0,len(board)-1)
-		row = randint(0,len(board[col])-1)
+		col = randint(0,11)
+		if col <6:
+			row = randint(0,6)
+		else:
+			row = randint(0,11)
 		thisTrans=True
 		#look to see if the position is valid
 		for element in ship:
@@ -73,9 +76,7 @@ def getBoard(board):
 			    thisTrans = False
 		    elif  not(board[element['x']+col][element['y']+row]==const.EMPTY):
     			    thisTrans = False
-			    print 'Overlap len:' + str(len(board)) + ";" + str(col) + ":" + str(row)
-			    var = raw_input('Continue')
-	
+			    print 'Overlap len:' + str(len(board)) + ";" + str(col) + ":" + str(row)	
 		if thisTrans:
 		    invalidPosition = False
 		    for element in ship:
