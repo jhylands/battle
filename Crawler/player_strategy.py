@@ -47,6 +47,12 @@ def initGuessList():
 	for n in range(1,11,2):
 	    if XYValid(n,i):
 		guessList.append({'x' : n, 'y' : i})
+
+def initPlaceList():
+    for i in range(0,11):
+	for n in range(0,11):
+	    if XYValid(n,i):
+		guessList.append({'x' : n, 'y' : i})
 #array of all the ships
 ships =[]
 #destroyer
@@ -63,12 +69,11 @@ def getBoard(board):
 	for ship in ships:
 	    #chose random position
 	    invalidPosition = True
+	    placeList = initPlaceList()
 	    while invalidPosition:
-		col = randint(0,11)
-		if col <6:
-			row = randint(0,6)
-		else:
-			row = randint(0,11)
+ 		#place = placeList.pop()
+		col = randint(0,len(board)-1)
+		row = randint(0,len(board[col]))
 		thisTrans=True
 		#look to see if the position is valid
 		for element in ship:
